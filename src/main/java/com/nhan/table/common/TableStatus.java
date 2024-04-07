@@ -1,25 +1,22 @@
 package com.nhan.table.common;
 
+import lombok.Getter;
+
 /*
 * AVAILABLE:
 * OCCUPIED: in use
 * UNAVAILABLE:
-* pending: in processing
 * */
+@Getter
 public enum TableStatus {
     AVAILABLE("Available"),
     OCCUPIED("Occupied"),
-    UNAVAILABLE("Unavailable"),
-    PENDING("Pending");
+    UNAVAILABLE("Unavailable");
 
     private final String status;
 
     TableStatus(String status) {
         this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     @Override

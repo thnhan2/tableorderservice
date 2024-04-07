@@ -1,0 +1,34 @@
+# Loại bỏ các tệp biên dịch Java
+*.class
+
+# Loại bỏ thư mục build và các tệp tạm thời
+build/
+target/
+out/
+*.jar
+!target/*.jar
+
+# Loại bỏ các tệp cấu hình IDE và tệp hệ thống
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*.swl
+*.DS_Store
+
+# Loại bỏ các tệp nhật ký và tệp cấu hình
+*.log
+*.sql
+*.jks
+*.p12
+
+# Loại bỏ thư mục node_modules và các tệp liên quan đến Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Loại bỏ thư mục .git và .mvn
+.git/
+.mvn/

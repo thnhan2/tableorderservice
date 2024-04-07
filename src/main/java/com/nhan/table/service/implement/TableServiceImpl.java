@@ -30,9 +30,11 @@ public class TableServiceImpl implements TableService {
     public boolean openTable(Long tableId) {
         TableModel tableModel = findById(tableId);
         if (tableModel != null) {
+            if (tableModel.getTableStatus() == TableStatus.AVAILABLE) {
             tableModel.setTableStatus(TableStatus.OCCUPIED);
             tableRepository.save(tableModel);
             return true;
+            }
         }
         return false;
     }

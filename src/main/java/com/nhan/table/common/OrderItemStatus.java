@@ -1,15 +1,11 @@
 package com.nhan.table.common;
 
 public enum OrderItemStatus {
-    PENDING("Pending"),
-    IN_PROGRESS("In progress"),
-    READY("Ready"),
-    DELIVERED("Delivered"),
-    COMPLETED("Completed"),
-    CANCELLED("Cancelled"),
-    REFUNDED("Refunded"),
-    ERROR("Error"),
-    RETURNED("Returned");
+    ORDERED("item hava been ordered"),
+    COOKING("item being cooked"),
+    READY("item is ready to serve"),
+    CANCELLED("item has been cancelled"),
+    RETURNED("item has been returned");
 
     private final String status;
 

@@ -2,7 +2,6 @@ package com.nhan.table.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nhan.table.common.OrderStatus;
-import com.nhan.table.common.TableStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,9 +44,13 @@ public class OrderModel {
         this.createdAt = createdAt;
         this.purchaseTime =  purchaseTime;
         this.totalPrice = totalPrice;
+
     }
 
     public void addItem(OrderItemModel orderItemModel) {
         this.orderItems.add(orderItemModel);
+    }
+
+    public void totalPrice() {
     }
 }

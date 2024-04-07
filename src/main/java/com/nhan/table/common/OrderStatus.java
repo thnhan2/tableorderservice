@@ -1,16 +1,11 @@
 package com.nhan.table.common;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderStatus {
-    PENDING("Pending"),
-    IN_PROGRESS("In progress"),
-    READY("Ready"),
-    ON_THE_WAY("On the way"),
-    DELIVERED("Delivered"),
-    COMPLETED("Completed"),
-    CANCELLED("Cancelled"),
-    REFUNDED("Refunded"),
-    ERROR("Error"),
-    RETURNED("Returned");
+    ORDERING("order item"),
+    PAID("complete payment");
 
     private final String status;
 
@@ -18,7 +13,4 @@ public enum OrderStatus {
         this.status = status;
     }
 
-    public String getStatus() {
-        return status;
-    }
 }

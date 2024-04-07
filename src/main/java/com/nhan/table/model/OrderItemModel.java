@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -13,14 +15,21 @@ import lombok.NoArgsConstructor;
 @Table(name = "order_items")
 public class OrderItemModel {
     @Id
-    private String id;
-    private String categoryId;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String itemId;
 
+    private String name;
     @Column(name = "item_status")
     private String itemStatus;
-    private double price;
+
+    private int qty;
+
+    private String note;
+
+    private Date orderTime;
+    private Date serveTime;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

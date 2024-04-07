@@ -1,6 +1,8 @@
 package com.nhan.table.service.implement;
 
+import com.nhan.table.common.OrderStatus;
 import com.nhan.table.common.TableStatus;
+import com.nhan.table.common.util.TimeZoneHelper;
 import com.nhan.table.model.OrderItemModel;
 import com.nhan.table.model.OrderModel;
 import com.nhan.table.repository.OrderItemRepository;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,8 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemRepository orderItemRepository;
 
     @Override
-    public List<OrderModel> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderItemModel> getAllOrders() {
+        return orderItemRepository.findAll();
     }
 
     @Override
@@ -37,7 +40,12 @@ public class OrderServiceImpl implements OrderService {
         if (tableService.getTableStatus(order.getTableId()).equals(String.valueOf(TableStatus.AVAILABLE))) {
             tableService.openTable(order.getTableId());
         }
-
+        else  {
+            return null;
+        }
+        order.setCreatedAt(TimeZoneHelper.convertToTimeZone(new Date()));
+        order.setPurchaseTime(null);
+        order.setOrderStatus(OrderStatus.valueOf("ORDERING"));
         return orderRepository.save(order);
     }
 
@@ -45,6 +53,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderModel getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
+    }
+
+    public void updateOderItem(OrderItemModel orderItemModel) {
+        System.out.println("xin chao" + orderItemModel);
+        OrderItemModel orderItem = orderItemRepository.findById(orderItemModel.getId())
+                .orElseThrow(() -> new EntityNotFoundException("OrderItem not found with id: " + orderItemModel.getItemId()));
+        orderItem.setItemStatus(orderItemModel.getItemStatus());
+        orderItemRepository.save(orderItem);
     }
 
     @Override
@@ -55,26 +71,57 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderModel updateOrder(Long orderId, OrderModel updatedOrder) {
         OrderModel existingOrder = getOrderById(orderId);
-        existingOrder.setCreatedAt(updatedOrder.getCreatedAt());
-        existingOrder.setPurchaseTime(updatedOrder.getPurchaseTime());
-        existingOrder.setOrderItems(updatedOrder.getOrderItems());
+        if (updatedOrder.getOrderStatus() != null)
+            existingOrder.setCreatedAt(updatedOrder.getCreatedAt());
+        if (updatedOrder.getOrderItems()!= null)
+            existingOrder.setOrderItems(updatedOrder.getOrderItems());
+        if(updatedOrder.getOrderStatus()!= null)
+            existingOrder.setOrderStatus(updatedOrder.getOrderStatus());
         return orderRepository.save(existingOrder);
+    }
+
+    @Override
+    public void updateAmount(Long orderId) {
+        if (orderRepository.findById(orderId).isPresent()) {
+            OrderModel orderModel = orderRepository.findById(orderId).get();
+            orderModel.totalPrice();
+        }
+    }
+
+    @Override
+    public OrderItemModel getItemById(Long itemId) {
+        Optional<OrderItemModel> itemModels = orderItemRepository.findById(itemId);
+        return itemModels.orElse(null);
+    }
+
+    public List<OrderItemModel> getAllItems() {
+        return orderItemRepository.findAll();
     }
 
 
     @Override
-    public ResponseEntity<String> addOrderItem(Long orderId, OrderItemModel orderItemModel) {
+    public ResponseEntity<Object> addOrderItem(Long orderId, OrderItemModel orderItemModel) {
         Optional<OrderModel> orderOptional = orderRepository.findById(orderId);
 
-        if (!orderOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
+        if (orderOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
         OrderModel order = orderOptional.get();
-        orderItemModel.setOrder(order);
 
-        orderItemRepository.save(orderItemModel);
+        OrderItemModel item = new OrderItemModel();
+        item.setItemId(orderItemModel.getItemId());
+        item.setItemStatus("ORDERED");
+        item.setQty(orderItemModel.getQty());
+        item.setNote(orderItemModel.getNote());
+        item.setName(orderItemModel.getName());
+        item.setOrderTime(TimeZoneHelper.convertToTimeZone(new Date()));
+        item.setOrder(order);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Order item added successfully");
+        OrderItemModel savedItem = orderItemRepository.save(item);
+        order.totalPrice();
+        orderRepository.save(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedItem);
     }
+
 }

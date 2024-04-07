@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/tables")
 public class TableController {
 
@@ -66,7 +67,7 @@ public class TableController {
     }
 
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<TableModel>> getAllTables() {
         List<TableModel> tables = tableService.getAllTable();
         return ResponseEntity.ok(tables);
